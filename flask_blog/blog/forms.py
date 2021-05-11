@@ -1,8 +1,11 @@
+from blog import bcrypt
+from blog.models import User
 from flask_wtf import FlaskForm
 from flask_wtf.file import (
 	FileField, 
 	FileAllowed
 )
+from flask_login import current_user
 from wtforms import (
 	StringField, 
 	TextAreaField,
@@ -17,8 +20,6 @@ from wtforms.validators import (
 	EqualTo,
 	ValidationError
 )
-from blog.models import User
-from flask_login import current_user
 
 
 class RegistrationForm(FlaskForm):
@@ -133,3 +134,13 @@ class UpdatePostForm(FlaskForm):
 
 class DeletePostForm(FlaskForm):
 	submit = SubmitField('Yes, delete')
+
+
+class ChangePasswordForm(FlaskForm):
+	old_password = PasswordField('Old password', validators=[DataRequired()])
+	new_password = PasswordField('New password', validators=[DataRequired()])
+	submit = SubmitField('Save')
+
+	def validate_old_password(self, old_password):
+		if not bcrypt.check_password_hash(current_user.password, old_password.data):
+			raise ValidationError('Please, provide a correct password!')

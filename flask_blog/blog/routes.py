@@ -6,7 +6,8 @@ from blog.forms import (
 	UpdateAccountForm,
 	CreatePostForm,
 	UpdatePostForm,
-	DeletePostForm
+	DeletePostForm,
+	ChangePasswordForm
 )
 from blog.utils import save_picture
 from flask import (
@@ -120,6 +121,9 @@ def create_post():
 		db.session.add(post)
 		db.session.commit()
 		return redirect(url_for('detail_post', post_id=post.id))
+	if request.method == 'GET':
+		form.title.data = ''
+		form.content.data = ''
 	return render_template('post/create_post.html', title=title, form=form)
 
 @app.route('/post/<post_id>')
@@ -175,3 +179,27 @@ def delete_post(post_id):
 		return redirect(url_for('home'))
 	title = 'Access denied!'
 	return render_template('access_denied.html', title=title)
+
+@app.route('/change-password', methods=['GET', 'POST'])
+def change_password():
+	title = 'Blog | Change password'
+	form = ChangePasswordForm()
+	if form.validate_on_submit():
+		hashed_password = bcrypt.generate_password_hash(form.new_password.data).decode()
+		current_user.password = hashed_password
+		db.session.commit()
+		flash('Your password has been changed!', 'success')
+		return redirect('account')
+	if request.method == 'GET':
+		form.old_password.data = ''
+		form.new_password.data = ''
+	return render_template('user/change_password.html', title=title, form=form)
+
+@app.route('/posts/<username>')
+def get_user_posts(username):
+	user = User.query.filter_by(username=username).first()
+	return render_template(
+		'post/user_posts.html', 
+		posts=user.posts, 
+		username=user.username
+	)
