@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+	{{ title }}
+{% endblock title %}
+
+{% block content %}
+	<a href="{{ url_for('detail_post', post_id=post.id) }}">Back to article</a><br>
+	<form method="POST">
+		{{ form.hidden_tag() }}
+
+		{{ form.title.label }}:<br>
+		{% if form.title.errors %}
+			{% for error in form.title.errors %}
+				<span>{{ error }}</span><br>
+			{% endfor %}
+		{% endif %}
+		{{ form.title }}<br>
+
+		{{ form.content.label }}:<br>
+		{% if form.content.errors %}
+			{% for error in form.content.errors %}
+				<span>{{ error }}</span><br>
+			{% endfor %}
+		{% endif %}
+		{{ form.content }}<br>
+
+		{{ form.submit }}
+		<a href="{{ url_for('delete_post', post_id=post.id) }}">Delete</a>
+	</form>
+{% endblock content %}

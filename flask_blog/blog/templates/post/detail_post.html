@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+	{{ title }}
+{% endblock title %}
+
+{% block content %}
+	<div class="post">
+		<h1>{{ post.title }}</h1>
+		{% if current_user == post.author %}
+			<a href="{{ url_for('update_post', post_id=post.id) }}">Edit</a><br>
+		{% endif %}
+		<small>By <strong>{{ post.author.username }}</strong> on {{ post.date_posted.strftime("%Y-%m-%d %H:%M:%S") }}</small>
+		<p>{{ post.content }}</p>
+	</div>
+{% endblock content %}

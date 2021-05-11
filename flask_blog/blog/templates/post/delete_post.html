@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+	{{ title }}
+{% endblock title %}
+
+{% block content %}
+	<form method="POST">
+		{{ form.hidden_tag() }}
+		<h2>Are you sure you want to delete post "{{ post.title.capitalize() }}"?</h2>
+		{{ form.submit }}
+		<a href="{{ url_for('update_post', post_id=post.id) }}">Cancel</a>
+	</form>
+{% endblock content %}
